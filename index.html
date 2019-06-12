@@ -1,0 +1,138 @@
+<!doctype html>
+<head>
+	<meta charset="utf-8">
+	<title> Test </title>
+	<script type="text/javascript" src="http://cdn.webix.com/edge/webix.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.webix.com/edge/webix.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script type="text/javascript" src="testdata.js"></script>
+</head>
+<body>
+    <script type="text/javascript" charset="utf-8">
+        let header = {
+            css:"grey",
+            paddingX:10,
+            cols:[
+                {
+                    view:"label",
+                    label: "My App", 
+                    align:"left",
+                    css:"whitelabel"
+                },
+                {
+                    view:"button",
+                    type:"icon",
+                    icon:"wxi-user",
+                    label:"Profile", 
+                    align:"right",
+                    autowidth:true,
+                    css:"whitebutton",
+                    popup:"my_popup"
+                }
+            ]
+        }
+    
+        let side = {
+            css:"light-grey",
+            rows:[
+                {
+                    view:"list",
+                    id:"mylist",
+                    css:"list",
+                    width:200,
+                    scroll:false,
+                    autoheight:true,
+                    select:true,
+                    data:[ "Dashboard", "Users", "Products", "Locations" ]
+                },
+                { },
+                {
+                    view:"button",
+                    type:"icon",
+                    icon:"wxi-check",
+                    label:"Connected",
+                    css:"greenbutton"
+                }
+            ]
+        }
+
+        let base = {
+            rows:[
+                {
+                    view:"datatable",
+                    data:small_film_set,
+                    autoConfig:true,
+                    editable:true,
+                    rules:{
+                        "title":webix.rules.isNotEmpty,
+                        "year":webix.rules.isNumber
+                    }
+                }
+            ]
+        }
+
+        let form = {
+            rows:[
+                {
+                    view:"form",
+                    width: 300,
+                    elements:[
+                        { template:"Edit films", type:"section" },
+                        { view:"text", label:"Title" },
+                        { view:"text", label:"Year" },
+                        { view:"text", label:"Rating" },
+                        { view:"text", label:"Votes" },
+                        {
+                            margin:10,
+                            cols:[
+                            { view:"button", value:"Add new", type:"form" },
+                            { view:"button", value:"Clear" }
+                        ]},
+                        {}
+                    ]
+                }
+            ]
+        }
+
+        let main = {
+            cells:[ //try replacing cells with rows or cols
+                { id:"Dashboard", cols:[base,form] },
+                { id:"Users", template:"Users view" },
+                { id:"Products", template:"Products view" },
+                { id:"Locations", template:"Locations view" }
+            ]
+        }
+
+        let footer = {
+            view: "template",
+            css: "footer",
+            autoheight:true,
+            template: "The software is provided by <a href=#>https://webix.com</a>. All rights reserved (c)"
+        }
+        webix.ui({
+            rows:[
+                header,
+                {cols:[side, {view:"resizer"}, main]},
+                footer
+            ]
+        });
+
+        webix.ui({
+            view:"popup",
+            id:"my_popup",
+            body:{
+                view:"list",
+                scroll:false,
+                autoheight:true,
+                data:[ "Settings", "Log Out" ]
+            }
+        }).hide();
+
+        $$("mylist").select("Dashboard");
+
+        $$("mylist").attachEvent("onAfterSelect", function(id){
+            $$(id).show(); //id is "Dashboard", "Users"
+        });
+	</script>
+</body>
+</html>
