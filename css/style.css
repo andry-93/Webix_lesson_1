@@ -1,42 +1,35 @@
-.greenbutton.webix_el_button button, .greenbutton.webix_el_button button span,
-.greenbutton.webix_el_button button .webix_icon_btn {
+.green_label .webix_el_box, .green_label .webix_icon_btn {
   color:green;
 }
 
-.greenbutton.webix_el_button button {
-  background-color: transparent;
+.white_button.webix_el_button button {
+  background-color: transparent !important;
 }
 
-.whitebutton.webix_el_button button {
-  background-color: transparent;
+.white_button.webix_el_button button:hover {
+  background-color: #3D464F !important;
 }
 
-.whitebutton.webix_el_button.webix_secondary button .webix_icon_btn {
-  color:white;
-}
-
-.whitebutton.webix_el_button button, .whitebutton.webix_el_button button span {
-  color:white;
-}
-
-.whitelabel.webix_el_label .webix_el_box {
-  color:white;
-}
-.grey {
-  background-color: #657584;
-}
 .light-grey {
   background-color: #eeeeee;
 }
+
 .footer {
   text-align: center;
 }
+
 .list {
   border: 0;
 }
+
 .list.webix_view {
   background-color: transparent;
 }
+
 .list .webix_list_item {
   border: 0;
+}
+
+.list .webix_list_item:hover {
+  background-color: rgba(0, 0, 0, .1);
 }

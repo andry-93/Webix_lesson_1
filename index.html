@@ -9,28 +9,28 @@
 </head>
 <body>
     <script type="text/javascript" charset="utf-8">
-        let header = {
-            css:"grey",
+        let toolbar = {
+            view:"toolbar",
+            css:"webix_dark",
             paddingX:10,
             cols:[
                 {
                     view:"label",
                     label: "My App", 
                     align:"left",
-                    css:"whitelabel"
                 },
                 {
                     view:"button",
+                    css:"white_button",
                     type:"icon",
                     icon:"wxi-user",
                     label:"Profile", 
                     align:"right",
                     autowidth:true,
-                    css:"whitebutton",
                     popup:"my_popup"
                 }
             ]
-        }
+        };
     
         let side = {
             css:"light-grey",
@@ -47,11 +47,10 @@
                 },
                 { },
                 {
-                    view:"button",
-                    type:"icon",
-                    icon:"wxi-check",
-                    label:"Connected",
-                    css:"greenbutton"
+                    view: "label",
+                    label: "<span class='webix_icon_btn wxi-check'></span>Connected",
+                    align: "center",
+                    css:"green_label"
                 }
             ]
         }
@@ -111,7 +110,7 @@
         }
         webix.ui({
             rows:[
-                header,
+                toolbar,
                 {cols:[side, {view:"resizer"}, main]},
                 footer
             ]
