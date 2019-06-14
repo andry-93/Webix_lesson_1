@@ -1,137 +1,170 @@
 <!doctype html>
+
 <head>
-	<meta charset="utf-8">
-	<title> Test </title>
-	<script type="text/javascript" src="http://cdn.webix.com/edge/webix.js"></script>
+    <meta charset="utf-8">
+    <title> Test </title>
+    <script type="text/javascript" src="http://cdn.webix.com/edge/webix.js"></script>
     <link rel="stylesheet" type="text/css" href="http://cdn.webix.com/edge/webix.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script type="text/javascript" src="testdata.js"></script>
 </head>
+
 <body>
     <script type="text/javascript" charset="utf-8">
+        let profilePopup = {
+            view: "popup",
+            id: "my_popup",
+            body: {
+                view: "list",
+                scroll: false,
+                autoheight: true,
+                data: ["Settings", "Log Out"]
+            }
+        };
+
         let toolbar = {
-            view:"toolbar",
-            css:"webix_dark",
-            paddingX:10,
-            cols:[
+            view: "toolbar",
+            css: "webix_dark",
+            paddingX: 10,
+            cols: [
                 {
-                    view:"label",
-                    label: "My App", 
-                    align:"left",
+                    view: "label",
+                    label: "My App",
+                    align: "left",
                 },
                 {
-                    view:"button",
-                    css:"white_button",
-                    type:"icon",
-                    icon:"wxi-user",
-                    label:"Profile", 
-                    align:"right",
-                    autowidth:true,
-                    popup:"my_popup"
+                    view: "button",
+                    css: "white_button",
+                    type: "icon",
+                    icon: "wxi-user",
+                    label: "Profile",
+                    align: "right",
+                    autowidth: true,
+                    popup: profilePopup
                 }
             ]
         };
-    
+
         let side = {
-            css:"light-grey",
-            rows:[
+            css: "light-grey",
+            rows: [
                 {
-                    view:"list",
-                    id:"mylist",
-                    css:"list",
-                    width:200,
-                    scroll:false,
-                    autoheight:true,
-                    select:true,
-                    data:[ "Dashboard", "Users", "Products", "Locations" ]
+                    view: "list",
+                    id: "mylist",
+                    css: "list",
+                    width: 200,
+                    scroll: false,
+                    autoheight: true,
+                    select: true,
+                    data: ["Dashboard", "Users", "Products", "Locations"],
+                    on: {
+                        "onAfterSelect": function (id) {
+                            $$(id).show(); //id is "Dashboard", "Users"
+                        }
+                    }
                 },
-                { },
+                {},
                 {
                     view: "label",
                     label: "<span class='webix_icon_btn wxi-check'></span>Connected",
                     align: "center",
-                    css:"green_label"
+                    css: "green_label"
                 }
             ]
         }
 
         let base = {
-            rows:[
-                {
-                    view:"datatable",
-                    data:small_film_set,
-                    autoConfig:true,
-                    editable:true,
-                    rules:{
-                        "title":webix.rules.isNotEmpty,
-                        "year":webix.rules.isNumber
-                    }
-                }
-            ]
+            view: "datatable",
+            id: "filmTable",
+            data: small_film_set,
+            autoConfig: true,
+            editable: true,
+            rules: {
+                "title": webix.rules.isNotEmpty,
+                "year": webix.rules.isNumber
+            }
         }
 
         let form = {
-            rows:[
+            view: "form",
+            id: "editForm",
+            width: 300,
+            elements: [
+                { template: "Edit films", type: "section" },
+                { view: "text", label: "Title", name: "title", invalidMessage: "Enter \"Title\"" },
+                { view: "text", label: "Year", name: "year", invalidMessage: "\"Year\" should be between 1970 and current" },
+                { view: "text", label: "Rating", name: "rating", invalidMessage: "\"Rating\" cannot be empty or 0" },
+                { view: "text", label: "Votes", name: "votes", invalidMessage: "Enter \"Votes\" must be less than 100000" },
                 {
-                    view:"form",
-                    width: 300,
-                    elements:[
-                        { template:"Edit films", type:"section" },
-                        { view:"text", label:"Title" },
-                        { view:"text", label:"Year" },
-                        { view:"text", label:"Rating" },
-                        { view:"text", label:"Votes" },
+                    margin: 10,
+                    cols: [
                         {
-                            margin:10,
-                            cols:[
-                            { view:"button", value:"Add new", type:"form" },
-                            { view:"button", value:"Clear" }
-                        ]},
-                        {}
+                            view: "button",
+                            value: "Add new",
+                            type: "form",
+                            click: function () {
+                                if (this.getFormView().validate()) {
+                                    $$("filmTable").add(this.getFormView().getValues());
+                                    this.getFormView().clear();
+                                }
+                            }
+                        },
+                        {
+                            view: "button",
+                            value: "Clear",
+                            id: "clear",
+                            click: function () {
+                                let form = this.getFormView();
+                                webix.confirm("Are you sure?").then(function(result){
+                                    form.clear();
+                                    form.clearValidation();
+                                });
+                            }
+                        }
                     ]
+                },
+                {}
+            ],
+            rules: {
+                title: webix.rules.isNotEmpty,
+                year: function(value){
+                    return (value>1970) && (value<new Date().getFullYear());
+                },
+                rating: function(value){
+                    return (value!=0) && (value);
+                },
+                votes: function(value){
+                    return (value<100000);
                 }
-            ]
+            }
         }
 
         let main = {
-            cells:[ //try replacing cells with rows or cols
-                { id:"Dashboard", cols:[base,form] },
-                { id:"Users", template:"Users view" },
-                { id:"Products", template:"Products view" },
-                { id:"Locations", template:"Locations view" }
+            cells: [ //try replacing cells with rows or cols
+                { id: "Dashboard", cols: [base, form] },
+                { id: "Users", template: "Users view" },
+                { id: "Products", template: "Products view" },
+                { id: "Locations", template: "Locations view" }
             ]
         }
 
         let footer = {
             view: "template",
             css: "footer",
-            autoheight:true,
+            autoheight: true,
             template: "The software is provided by <a href=#>https://webix.com</a>. All rights reserved (c)"
         }
         webix.ui({
-            rows:[
+            rows: [
                 toolbar,
-                {cols:[side, {view:"resizer"}, main]},
+                { cols: [side, { view: "resizer" }, main] },
                 footer
             ]
         });
 
-        webix.ui({
-            view:"popup",
-            id:"my_popup",
-            body:{
-                view:"list",
-                scroll:false,
-                autoheight:true,
-                data:[ "Settings", "Log Out" ]
-            }
-        }).hide();
-
         $$("mylist").select("Dashboard");
 
-        $$("mylist").attachEvent("onAfterSelect", function(id){
-            $$(id).show(); //id is "Dashboard", "Users"
-        });
-	</script>
+    </script>
 </body>
+
 </html>
