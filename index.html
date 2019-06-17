@@ -81,9 +81,8 @@
             css: "ferst_id",
             hover:"hover-table",
             on: {
-                "onAfterSelect": function(id){
-                    const item = this.getItem(id);
-                    $$("editForm").setValues(item);
+                "onAfterLoad": function(id){
+                    $$("editForm").bind(this);
                 }
             },
             columns:[
@@ -182,6 +181,11 @@
                                 return false;
                             });
                         }
+                    },
+                    on: {
+                        "onAfterLoad": function () {
+                            $$("chart").sync(this);
+                        }
                     }
                 }
             ]
@@ -208,11 +212,12 @@
 
         let chart = {
             view:"chart",
+            id: "chart",
             type:"bar",
             value:"#age#",
             barWidth:30,
             radius:0,
-            url: "data/users.js",
+            // url: "data/users.js",
             tooltip:{
                 template:"#age#"
             },
@@ -244,17 +249,10 @@
                             click: function () {
                                 let formView = this.getFormView();
                                 if (formView.validate()) {
-                                    const values = formView.getValues();
-                                    if (values.id)
-                                        {
-                                            $$("filmTable").updateItem(values.id,values);
-                                            formView.clear();
-                                        }
-                                    else
-                                        {
-                                            $$("filmTable").add(values);
-                                            formView.clear();
-                                        }
+                                    formView.save();
+                                    formView.clear();
+                                    formView.clearValidation();
+                                    $$("filmTable").unselectAll();
                                 }
                             }
                         },
@@ -265,11 +263,12 @@
                             click: function () {
                                 let form = this.getFormView();
                                 webix.confirm({
-                                    title: "Delete",
+                                    title: "Clear",
                                     text: "Are you sure?",
                                 }).then(function(result){
                                     form.clear();
                                     form.clearValidation();
+                                    $$("filmTable").unselectAll();
                                 });
                             }
                         }
@@ -315,6 +314,7 @@
         });
 
         $$("mylist").select("Dashboard");
+        // $$("chart").sync($$("usersList"));
 
     </script>
 </body>
