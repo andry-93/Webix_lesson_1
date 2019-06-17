@@ -45,3 +45,8 @@
 .ferst_id .webix_column.webix_first .webix_cell {
   background-color: #F4F5F9;
 }
+
+.webix_dtable .webix_ss_body .webix_cell .wxi-trash:hover {
+  color: red;
+  cursor: pointer;
+}
