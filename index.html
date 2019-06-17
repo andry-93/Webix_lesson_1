@@ -251,13 +251,10 @@
                                             formView.clear();
                                         }
                                     else
-                                        webix.confirm({
-                                            title: "Add",
-                                            text: "Are you sure?",
-                                        }).then(function(result){
+                                        {
                                             $$("filmTable").add(values);
                                             formView.clear();
-                                        });
+                                        }
                                 }
                             }
                         },
