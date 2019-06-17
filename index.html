@@ -246,13 +246,10 @@
                                 if (formView.validate()) {
                                     const values = formView.getValues();
                                     if (values.id)
-                                        webix.confirm({
-                                            title: "Update",
-                                            text: "Are you sure?",
-                                        }).then(function(result){
+                                        {
                                             $$("filmTable").updateItem(values.id,values);
                                             formView.clear();
-                                        });
+                                        }
                                     else
                                         webix.confirm({
                                             title: "Add",
