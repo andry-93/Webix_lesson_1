@@ -128,7 +128,7 @@
                 {
                     autoheight: true,
                     view:"toolbar",
-                    rows:[
+                    cols:[
                         {
                             view:"text",
                             id:"list_input",
@@ -140,6 +140,24 @@
                                         return obj.name.toLowerCase().indexOf(value) !== -1;
                                     })
                                 }
+                            }
+                        },
+                        {
+                            view: "button",
+                            value: "Sort asc",
+                            id: "sortAsc",
+                            autowidth: true,
+                            click: function () {
+                                $$("usersList").sort("#name#","asc","string");
+                            }
+                        },
+                        {
+                            view: "button",
+                            value: "Sort desc",
+                            id: "sortDesc",
+                            autowidth: true,
+                            click: function () {
+                                $$("usersList").sort("#name#","desc","string");
                             }
                         }
                     ] 
@@ -180,7 +198,8 @@
             xAxis:{
                 template:"'#age#",
                 title:"Age"
-            }
+            },
+            yAxis:{}
         };
 
         let form = {
