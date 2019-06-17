@@ -187,6 +187,25 @@
             ]
         }
 
+        let products = {
+            view:"treetable",
+            id: "products",
+            template:"{common.icon()} {common.checkbox()} {common.folder()} <span>#title#</span>", 
+            select:"row",
+            url: "data/products.js",
+            columns:[
+                { id:"id", header:"", css:{"text-align":"left"}, width:50 },
+                { id:"title", header:"Title", fillspace:true,
+                template:"{common.treetable()} #title#" },
+                { id:"price",	header:"Price",	width:200 }
+            ],
+            on: {
+                "onAfterLoad": function(){
+                    this.openAll();
+                }
+            }
+        }
+
         let chart = {
             view:"chart",
             type:"bar",
@@ -281,7 +300,7 @@
             cells: [ //try replacing cells with rows or cols
                 { id: "Dashboard", cols: [base, form] },
                 { id: "Users", rows: [users, chart] },
-                { id: "Products", template: "Products view" },
+                { id: "Products", rows: [products] },
                 { id: "Admin", template: "Admin view" }
             ]
         }
