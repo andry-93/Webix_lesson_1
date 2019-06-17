@@ -55,7 +55,7 @@
                     scroll: false,
                     autoheight: true,
                     select: true,
-                    data: ["Dashboard", "Users", "Products", "Locations"],
+                    data: ["Dashboard", "Users", "Products", "Admin"],
                     on: {
                         "onAfterSelect": function (id) {
                             $$(id).show(); //id is "Dashboard", "Users"
@@ -78,7 +78,8 @@
             url: "data/data.js",
             autoConfig: true,
             select:"row",
-            css: "highlight ferst_id",
+            css: "ferst_id",
+            hover:"hover-table",
             on: {
                 "onAfterSelect": function(id){
                     const item = this.getItem(id);
@@ -121,6 +122,66 @@
                 }
             },
         }
+
+        let users = {
+            rows: [
+                {
+                    autoheight: true,
+                    view:"toolbar",
+                    rows:[
+                        {
+                            view:"text",
+                            id:"list_input",
+                            css:"fltr",
+                            on: {
+                                "onTimedKeyPress": function(){
+                                    let value = this.getValue().toLowerCase();
+                                    $$("usersList").filter(function(obj){
+                                        return obj.name.toLowerCase().indexOf(value) !== -1;
+                                    })
+                                }
+                            }
+                        }
+                    ] 
+                },
+                {
+                    view:"list",
+                    url: "data/users.js",
+                    id: "usersList",
+                    css: "highlight",
+                    select:true,
+                    template:"#name# <span style='float: right' class='removeBtn webix_icon wxi-close'></span>",
+                    onClick:{
+                        removeBtn:function(e, id){
+                            let obj = this;
+                            webix.confirm({
+                                title: "Delete",
+                                text: "Are you sure?",
+                            }).then(function(result){
+                                obj.remove(id);
+                                return false;
+                            });
+                        }
+                    }
+                }
+            ]
+        }
+
+        let chart = {
+            view:"chart",
+            type:"bar",
+            value:"#age#",
+            barWidth:30,
+            radius:0,
+            url: "data/users.js",
+            tooltip:{
+                template:"#age#"
+            },
+            xAxis:{
+                template:"'#age#",
+                title:"Age"
+            }
+        };
 
         let form = {
             view: "form",
@@ -198,9 +259,9 @@
         let main = {
             cells: [ //try replacing cells with rows or cols
                 { id: "Dashboard", cols: [base, form] },
-                { id: "Users", template: "Users view" },
+                { id: "Users", rows: [users, chart] },
                 { id: "Products", template: "Products view" },
-                { id: "Locations", template: "Locations view" }
+                { id: "Admin", template: "Admin view" }
             ]
         }
 
