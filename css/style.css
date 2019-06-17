@@ -2,14 +2,6 @@
   color:green;
 }
 
-.white_button.webix_el_button button {
-  background-color: transparent !important;
-}
-
-.white_button.webix_el_button button:hover {
-  background-color: #3D464F !important;
-}
-
 .light-grey {
   background-color: #eeeeee;
 }
