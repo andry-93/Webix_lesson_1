@@ -33,3 +33,15 @@
 .list .webix_list_item:hover {
   background-color: rgba(0, 0, 0, .1);
 }
+
+.highlight .webix_column .webix_cell[aria-rowindex="1"],
+.highlight .webix_column .webix_cell[aria-rowindex="2"], 
+.highlight .webix_column .webix_cell[aria-rowindex="3"],
+.highlight .webix_column .webix_cell[aria-rowindex="4"],
+.highlight .webix_column .webix_cell[aria-rowindex="5"] {
+  background-color: #EDEFF0;
+}
+
+.ferst_id .webix_column.webix_first .webix_cell {
+  background-color: #F4F5F9;
+}

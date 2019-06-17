@@ -6,7 +6,6 @@
     <script type="text/javascript" src="http://cdn.webix.com/edge/webix.js"></script>
     <link rel="stylesheet" type="text/css" href="http://cdn.webix.com/edge/webix.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script type="text/javascript" src="testdata.js"></script>
 </head>
 
 <body>
@@ -76,13 +75,51 @@
         let base = {
             view: "datatable",
             id: "filmTable",
-            data: small_film_set,
+            url: "data/data.js",
             autoConfig: true,
-            editable: true,
-            rules: {
-                "title": webix.rules.isNotEmpty,
-                "year": webix.rules.isNumber
-            }
+            select:"row",
+            css: "highlight ferst_id",
+            on: {
+                "onAfterSelect": function(id){
+                    const item = this.getItem(id);
+                    $$("editForm").setValues(item);
+                }
+            },
+            columns:[
+                { id:"id",
+                    header:"",
+                    sort:"text" },
+                { id:"title",
+                    header:["Film title",{content:"textFilter"}],
+                    minWidth:250,
+                    fillspace: true,
+                    sort:"text" },
+                { id:"year",
+                    header:["Released",{content:"textFilter"}],
+                    sort:"int" },
+                { id:"votes",
+                    header:["Votes",{content:"textFilter"}],
+                    sort:"text" },
+                { id:"rating",
+                    header:["Rating",{content:"textFilter"}],
+                    sort:"text" },
+                { id:"rank",
+                    header:["Rank",{content:"textFilter"}],
+                    sort:"int" },
+                { id:"del", header: "Delete", template:"{common.trashIcon()}" }
+            ],
+            onClick:{
+                "wxi-trash":function(e, id){
+                    let obj = this;
+                    webix.confirm({
+                        title: "Delete",
+                        text: "Are you sure?",
+                    }).then(function(result){
+                        obj.remove(id);
+                        return false;
+                    });
+                }
+            },
         }
 
         let form = {
@@ -95,6 +132,7 @@
                 { view: "text", label: "Year", name: "year", invalidMessage: "\"Year\" should be between 1970 and current" },
                 { view: "text", label: "Rating", name: "rating", invalidMessage: "\"Rating\" cannot be empty or 0" },
                 { view: "text", label: "Votes", name: "votes", invalidMessage: "Enter \"Votes\" must be less than 100000" },
+                { view: "text", label: "Rank", name: "rank" },
                 {
                     margin: 10,
                     cols: [
@@ -104,8 +142,23 @@
                             type: "form",
                             click: function () {
                                 if (this.getFormView().validate()) {
-                                    $$("filmTable").add(this.getFormView().getValues());
-                                    this.getFormView().clear();
+                                    const values = this.getFormView().getValues();
+                                    if (values.id)
+                                        webix.confirm({
+                                            title: "Update",
+                                            text: "Are you sure?",
+                                        }).then(function(result){
+                                            $$("filmTable").updateItem(values.id,values);
+                                            this.getFormView().clear();
+                                        });
+                                    else
+                                        webix.confirm({
+                                            title: "Add",
+                                            text: "Are you sure?",
+                                        }).then(function(result){
+                                            $$("filmTable").add(values);
+                                            this.getFormView().clear();
+                                        });
                                 }
                             }
                         },
@@ -115,7 +168,10 @@
                             id: "clear",
                             click: function () {
                                 let form = this.getFormView();
-                                webix.confirm("Are you sure?").then(function(result){
+                                webix.confirm({
+                                    title: "Delete",
+                                    text: "Are you sure?",
+                                }).then(function(result){
                                     form.clear();
                                     form.clearValidation();
                                 });
