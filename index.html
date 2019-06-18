@@ -25,8 +25,7 @@
             view: "toolbar",
             css: "webix_dark",
             paddingX: 10,
-            cols: [
-                {
+            cols: [{
                     view: "label",
                     label: "My App",
                     align: "left",
@@ -46,8 +45,7 @@
 
         let side = {
             css: "light-grey",
-            rows: [
-                {
+            rows: [{
                     view: "list",
                     id: "mylist",
                     css: "list",
@@ -72,7 +70,7 @@
             ]
         }
 
-        let categories = function() {
+        let categories = function () {
             return webix.ajax("data/categories.js")
         };
 
@@ -81,56 +79,110 @@
             id: "filmTable",
             url: "data/data.js",
             autoConfig: true,
-            select:"row",
+            select: "row",
             css: "ferst_id",
-            hover:"hover-table",
+            hover: "hover-table",
             collection: "data/categories.js",
-            scheme:{
-                $init:function(obj){
-                    obj.catId = Math.floor(Math.random() * 4)+1;
+            scheme: {
+                $init: function (obj) {
+                    obj.catId = Math.floor(Math.random() * 4) + 1;
                     obj.votes = obj.votes.replace(",", ".");
                     obj.rating = obj.rating.replace(",", ".");
                 }
             },
             on: {
-                "onAfterLoad": function(id){
+                "onAfterLoad": function (id) {
                     $$("editForm").bind(this);
+                    this.registerFilter(
+                        $$("tabbar"), {
+                            columnId: "year",
+                            compare: function (value, filter) {
+                                const ALL = 1;
+                                const OLD = 2;
+                                const MODERN = 3;
+                                const NEW = 4;
+
+                                if (+filter === ALL)
+                                    return value;
+                                if (+filter === OLD)
+                                    return value < 1990;
+                                if (+filter === MODERN)
+                                    return (value >= 1990 && value < 2010);
+                                if (+filter === NEW)
+                                    return value >= 2010;
+                            }
+                        }, {
+                            getValue: function (node) {
+                                return node.getValue();
+                            },
+                            setValue: function (node, value) {
+                                node.setValue(value);
+                            }
+                        }
+                    )
                 }
             },
-            columns:[
-                { id:"id",
-                    header:"",
-                    sort:"text" },
-                { id:"title",
-                    header:["Film title",{content:"textFilter"}],
-                    minWidth:250,
+            columns: [{
+                    id: "id",
+                    header: "",
+                    sort: "text"
+                },
+                {
+                    id: "title",
+                    header: ["Film title", {
+                        content: "textFilter"
+                    }],
+                    minWidth: 250,
                     fillspace: true,
-                    sort:"text" },
-                { id:"catId",
-                    header: ["Category", {content: "selectFilter"}],
-                    sort:"text",
-                    collection: "data/categories.js" },
-                { id:"year",
-                    header:["Released",{content:"textFilter"}],
-                    sort:"int" },
-                { id:"votes",
-                    header:["Votes",{content:"textFilter"}],
-                    sort:"text" },
-                { id:"rating",
-                    header:["Rating",{content:"textFilter"}],
-                    sort:"text" },
-                { id:"rank",
-                    header:["Rank",{content:"textFilter"}],
-                    sort:"int" },
-                { id:"del", header: "Delete", template:"{common.trashIcon()}" }
+                    sort: "text"
+                },
+                {
+                    id: "catId",
+                    header: ["Category", {
+                        content: "selectFilter"
+                    }],
+                    sort: "text",
+                    collection: "data/categories.js"
+                },
+                {
+                    id: "year",
+                    header: "Released",
+                    sort: "int"
+                },
+                {
+                    id: "votes",
+                    header: ["Votes", {
+                        content: "textFilter"
+                    }],
+                    sort: "text"
+                },
+                {
+                    id: "rating",
+                    header: ["Rating", {
+                        content: "textFilter"
+                    }],
+                    sort: "text"
+                },
+                {
+                    id: "rank",
+                    header: ["Rank", {
+                        content: "textFilter"
+                    }],
+                    sort: "int"
+                },
+                {
+                    id: "del",
+                    header: "Delete",
+                    template: "{common.trashIcon()}"
+                }
             ],
-            onClick:{
-                "wxi-trash":function(e, id){
+            onClick: {
+                "wxi-trash": function (e, id) {
                     let obj = this;
                     webix.confirm({
                         title: "Delete",
                         text: "Are you sure?",
-                    }).then(function(result){
+                    }).then(function (result) {
                         obj.remove(id);
                         return false;
                     });
@@ -139,19 +191,17 @@
         }
 
         let users = {
-            rows: [
-                {
+            rows: [{
                     autoheight: true,
-                    view:"toolbar",
-                    cols:[
-                        {
-                            view:"text",
-                            id:"list_input",
-                            css:"fltr",
+                    view: "toolbar",
+                    cols: [{
+                            view: "text",
+                            id: "list_input",
+                            css: "fltr",
                             on: {
-                                "onTimedKeyPress": function(){
+                                "onTimedKeyPress": function () {
                                     let value = this.getValue().toLowerCase();
-                                    $$("usersList").filter(function(obj){
+                                    $$("usersList").filter(function (obj) {
                                         return obj.name.toLowerCase().indexOf(value) !== -1;
                                     })
                                 }
@@ -164,7 +214,7 @@
                             id: "sortAsc",
                             autowidth: true,
                             click: function () {
-                                $$("usersList").sort("#name#","asc","string");
+                                $$("usersList").sort("#name#", "asc", "string");
                             }
                         },
                         {
@@ -174,25 +224,25 @@
                             id: "sortDesc",
                             autowidth: true,
                             click: function () {
-                                $$("usersList").sort("#name#","desc","string");
+                                $$("usersList").sort("#name#", "desc", "string");
                             }
                         }
-                    ] 
+                    ]
                 },
                 {
-                    view:"list",
+                    view: "list",
                     url: "data/users.js",
                     id: "usersList",
                     css: "highlight",
-                    select:true,
-                    template:"#name# <span style='float: right' class='removeBtn webix_icon wxi-close'></span>",
-                    onClick:{
-                        removeBtn:function(e, id){
+                    select: true,
+                    template: "#name# <span style='float: right' class='removeBtn webix_icon wxi-close'></span>",
+                    onClick: {
+                        removeBtn: function (e, id) {
                             let obj = this;
                             webix.confirm({
                                 title: "Delete",
                                 text: "Are you sure?",
-                            }).then(function(result){
+                            }).then(function (result) {
                                 obj.remove(id);
                                 return false;
                             });
@@ -208,57 +258,96 @@
         }
 
         let products = {
-            view:"treetable",
+            view: "treetable",
             id: "products",
-            template:"{common.icon()} {common.checkbox()} {common.folder()} <span>#title#</span>", 
-            select:"row",
+            template: "{common.icon()} {common.checkbox()} {common.folder()} <span>#title#</span>",
+            select: "row",
             url: "data/products.js",
-            columns:[
-                { id:"id", header:"", css:{"text-align":"left"}, width:50 },
-                { id:"title", header:"Title", fillspace:true,
-                template:"{common.treetable()} #title#" },
-                { id:"price",	header:"Price",	width:200 }
+            columns: [{
+                    id: "id",
+                    header: "",
+                    css: {
+                        "text-align": "left"
+                    },
+                    width: 50
+                },
+                {
+                    id: "title",
+                    header: "Title",
+                    fillspace: true,
+                    template: "{common.treetable()} #title#"
+                },
+                {
+                    id: "price",
+                    header: "Price",
+                    width: 200
+                }
             ],
             on: {
-                "onAfterLoad": function(){
+                "onAfterLoad": function () {
                     this.openAll();
                 }
             }
         }
 
         let chart = {
-            view:"chart",
+            view: "chart",
             id: "chart",
-            type:"bar",
-            value:"#age#",
-            barWidth:30,
-            radius:0,
+            type: "bar",
+            value: "#age#",
+            barWidth: 30,
+            radius: 0,
             // url: "data/users.js",
-            tooltip:{
-                template:"#age#"
+            tooltip: {
+                template: "#age#"
             },
-            xAxis:{
-                template:"'#age#",
-                title:"Age"
+            xAxis: {
+                template: "'#age#",
+                title: "Age"
             },
-            yAxis:{}
+            yAxis: {}
         };
 
         let form = {
             view: "form",
             id: "editForm",
             width: 300,
-            elements: [
-                { template: "Edit films", type: "section" },
-                { view: "text", label: "Title", name: "title", invalidMessage: "Enter \"Title\"" },
-                { view: "text", label: "Year", name: "year", invalidMessage: "\"Year\" should be between 1970 and current" },
-                { view: "text", label: "Rating", name: "rating", invalidMessage: "\"Rating\" cannot be empty or 0" },
-                { view: "text", label: "Votes", name: "votes", invalidMessage: "Enter \"Votes\" must be less than 100000" },
-                { view: "text", label: "Rank", name: "rank" },
+            elements: [{
+                    template: "Edit films",
+                    type: "section"
+                },
+                {
+                    view: "text",
+                    label: "Title",
+                    name: "title",
+                    invalidMessage: "Enter \"Title\""
+                },
+                {
+                    view: "text",
+                    label: "Year",
+                    name: "year",
+                    invalidMessage: "\"Year\" should be between 1970 and current"
+                },
+                {
+                    view: "text",
+                    label: "Rating",
+                    name: "rating",
+                    invalidMessage: "\"Rating\" cannot be empty or 0"
+                },
+                {
+                    view: "text",
+                    label: "Votes",
+                    name: "votes",
+                    invalidMessage: "Enter \"Votes\" must be less than 100000"
+                },
+                {
+                    view: "text",
+                    label: "Rank",
+                    name: "rank"
+                },
                 {
                     margin: 10,
-                    cols: [
-                        {
+                    cols: [{
                             view: "button",
                             value: "Add new",
                             type: "form",
@@ -281,7 +370,7 @@
                                 webix.confirm({
                                     title: "Clear",
                                     text: "Are you sure?",
-                                }).then(function(result){
+                                }).then(function (result) {
                                     form.clear();
                                     form.clearValidation();
                                     $$("filmTable").unselectAll();
@@ -294,24 +383,70 @@
             ],
             rules: {
                 title: webix.rules.isNotEmpty,
-                year: function(value){
-                    return (value>1970) && (value<new Date().getFullYear());
+                year: function (value) {
+                    return (value > 1970) && (value < new Date().getFullYear());
                 },
-                rating: function(value){
-                    return (value!=0) && (value);
+                rating: function (value) {
+                    return (value != 0) && (value);
                 },
-                votes: function(value){
-                    return (value<100000);
+                votes: function (value) {
+                    return (value < 100000);
                 }
             }
         }
 
         let main = {
             cells: [ //try replacing cells with rows or cols
-                { id: "Dashboard", cols: [base, form] },
-                { id: "Users", rows: [users, chart] },
-                { id: "Products", rows: [products] },
-                { id: "Admin", template: "Admin view" }
+                {
+                    id: "Dashboard",
+                    cols: [{
+                            rows: [{
+                                    borderless: true,
+                                    view: "tabbar",
+                                    id: "tabbar",
+                                    value: "listView",
+                                    multiview: true,
+                                    options: [{
+                                            value: 'All',
+                                            id: 1
+                                        },
+                                        {
+                                            value: 'Old',
+                                            id: 2
+                                        },
+                                        {
+                                            value: 'Modern',
+                                            id: 3
+                                        },
+                                        {
+                                            value: 'New',
+                                            id: 4
+                                        }
+                                    ],
+                                    on: {
+                                        onChange: function () {
+                                            $$("filmTable").filterByAll();
+                                        }
+                                    }
+                                },
+                                base
+                            ]
+                        },
+                        form
+                    ]
+                },
+                {
+                    id: "Users",
+                    rows: [users, chart]
+                },
+                {
+                    id: "Products",
+                    rows: [products]
+                },
+                {
+                    id: "Admin",
+                    template: "Admin view"
+                }
             ]
         }
 
@@ -324,13 +459,16 @@
         webix.ui({
             rows: [
                 toolbar,
-                { cols: [side, { view: "resizer" }, main] },
+                {
+                    cols: [side, {
+                        view: "resizer"
+                    }, main]
+                },
                 footer
             ]
         });
 
         $$("mylist").select("Dashboard");
-
     </script>
 </body>
 
