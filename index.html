@@ -72,6 +72,10 @@
             ]
         }
 
+        let categories = function() {
+            return webix.ajax("data/categories.js")
+        };
+
         let base = {
             view: "datatable",
             id: "filmTable",
@@ -80,6 +84,14 @@
             select:"row",
             css: "ferst_id",
             hover:"hover-table",
+            collection: "data/categories.js",
+            scheme:{
+                $init:function(obj){
+                    obj.catId = Math.floor(Math.random() * 4)+1;
+                    obj.votes = obj.votes.replace(",", ".");
+                    obj.rating = obj.rating.replace(",", ".");
+                }
+            },
             on: {
                 "onAfterLoad": function(id){
                     $$("editForm").bind(this);
@@ -94,6 +106,10 @@
                     minWidth:250,
                     fillspace: true,
                     sort:"text" },
+                { id:"catId",
+                    header: ["Category", {content: "selectFilter"}],
+                    sort:"text",
+                    collection: "data/categories.js" },
                 { id:"year",
                     header:["Released",{content:"textFilter"}],
                     sort:"int" },
