@@ -346,15 +346,22 @@
                 {
                     id: "title",
                     header: "Title",
+                    editor:"text",
                     fillspace: true,
                     template: "{common.treetable()} #title#"
                 },
                 {
                     id: "price",
                     header: "Price",
+                    editor:"text",
                     width: 200
                 }
             ],
+            editable:true,
+            rules:{
+                "title":webix.rules.isNotEmpty,
+                "price":webix.rules.isNumber
+            },
             on: {
                 "onAfterLoad": function () {
                     this.openAll();
