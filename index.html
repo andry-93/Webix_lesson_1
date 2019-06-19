@@ -10,6 +10,10 @@
 
 <body>
     <script type="text/javascript" charset="utf-8">
+        webix.protoUI({
+            name:"editlist"
+        }, webix.EditAbility, webix.ui.list);
+
         let profilePopup = {
             view: "popup",
             id: "my_popup",
@@ -74,6 +78,40 @@
             return webix.ajax("data/categories.js")
         };
 
+        let tabbar = {
+            borderless: true,
+            view: "tabbar",
+            id: "tabbar",
+            value: "listView",
+            multiview: true,
+            options: [{
+                    value: 'All',
+                    id: 1,
+                    width: 60
+                },
+                {
+                    value: 'Old',
+                    id: 2,
+                    width: 60
+                },
+                {
+                    value: 'Modern',
+                    id: 3,
+                    width: 80
+                },
+                {
+                    value: 'New',
+                    id: 4,
+                    width: 60
+                }
+            ],
+            on: {
+                onChange: function () {
+                    $$("filmTable").filterByAll();
+                }
+            }
+        };
+
         let base = {
             view: "datatable",
             id: "filmTable",
@@ -93,6 +131,7 @@
             on: {
                 "onAfterLoad": function (id) {
                     $$("editForm").bind(this);
+
                     this.registerFilter(
                         $$("tabbar"), {
                             columnId: "year",
@@ -230,12 +269,23 @@
                     ]
                 },
                 {
-                    view: "list",
+                    view: "editlist",
                     url: "data/users.js",
                     id: "usersList",
-                    css: "highlight",
                     select: true,
-                    template: "#name# <span style='float: right' class='removeBtn webix_icon wxi-close'></span>",
+                    editable:true,
+                    editor:"text",
+                    editValue:"name",
+                    template: "<span>#name#</span> <span style='float: right' class='removeBtn webix_icon wxi-close'></span>",
+                    rules:{
+                        "name":webix.rules.isNotEmpty
+                    },
+                    scheme: {
+                        $init: function(obj) {
+                            if (obj.age < 26)
+                                obj.$css = "highlight"
+                        }
+                    },
                     onClick: {
                         removeBtn: function (e, id) {
                             let obj = this;
@@ -250,12 +300,34 @@
                     },
                     on: {
                         "onAfterLoad": function () {
-                            $$("chart").sync(this);
+                            $$("chart").sync(this, function(item) {
+                                this.group({
+                                    by: "country",
+                                    map: {
+                                        value: ["name", "count"]
+                                    }
+                                });
+                            });
                         }
                     }
                 }
             ]
         }
+
+        let chart = {
+            view: "chart",
+            id: "chart",
+            type: "bar",
+            // url: "data/users.js",
+            tooltip: {
+                template: "#age#"
+            },
+            xAxis: {
+                template: "#country#",
+                title: "Country"
+            },
+            yAxis: {}
+        };
 
         let products = {
             view: "treetable",
@@ -289,24 +361,6 @@
                 }
             }
         }
-
-        let chart = {
-            view: "chart",
-            id: "chart",
-            type: "bar",
-            value: "#age#",
-            barWidth: 30,
-            radius: 0,
-            // url: "data/users.js",
-            tooltip: {
-                template: "#age#"
-            },
-            xAxis: {
-                template: "'#age#",
-                title: "Age"
-            },
-            yAxis: {}
-        };
 
         let form = {
             view: "form",
@@ -400,35 +454,8 @@
                 {
                     id: "Dashboard",
                     cols: [{
-                            rows: [{
-                                    borderless: true,
-                                    view: "tabbar",
-                                    id: "tabbar",
-                                    value: "listView",
-                                    multiview: true,
-                                    options: [{
-                                            value: 'All',
-                                            id: 1
-                                        },
-                                        {
-                                            value: 'Old',
-                                            id: 2
-                                        },
-                                        {
-                                            value: 'Modern',
-                                            id: 3
-                                        },
-                                        {
-                                            value: 'New',
-                                            id: 4
-                                        }
-                                    ],
-                                    on: {
-                                        onChange: function () {
-                                            $$("filmTable").filterByAll();
-                                        }
-                                    }
-                                },
+                            rows: [
+                                tabbar,
                                 base
                             ]
                         },

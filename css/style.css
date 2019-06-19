@@ -26,11 +26,6 @@
   background-color: rgba(0, 0, 0, .1);
 }
 
-.highlight .webix_list_item:nth-child(-n+5) {
-  background-color: #edeff5;
-  border-bottom: solid 1px #cccccc;
-}
-
 .ferst_id .webix_column.webix_first .webix_cell {
   background-color: #F4F5F9;
 }
@@ -42,4 +37,8 @@
 
 .hover-table {
   background: #F0DCB6 !important;
+}
+
+.highlight {
+  background-color: #FEFFD4;
 }
